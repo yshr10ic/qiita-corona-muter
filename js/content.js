@@ -8,6 +8,12 @@ switch(url) {
             muteTrend();
         });
         break;
+    // タグフィード
+    case 'https://qiita.com/tag-feed':
+        let id = setInterval(function() {
+            muteTagFeed();
+        }, 1000);
+        break;
     default:
         console.log(url);
         break;
@@ -22,6 +28,17 @@ function muteTrend() {
         if (includeCorona($(element).children("div").children("a").text())) {
             $(element).hide();
             // $(element).children("div").css("color", "red");
+        }
+    });
+}
+
+function muteTagFeed() {
+    console.log("muteTagFeed is called");
+    $(".tf-Item").each(function(index, element) {
+        let regex = /コロナ/g;
+        if (includeCorona($(element).children("div").children(".tf-ItemContent").children("div").children("a").text())) {
+            $(element).css("display", "none");
+            // $(element).children("div").children(".tf-ItemContent").children("div").css("color", "red");
         }
     });
 }
