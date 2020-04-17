@@ -10,9 +10,15 @@ switch(url) {
         break;
     // タグフィード
     case 'https://qiita.com/tag-feed':
-        let id = setInterval(function() {
-            muteTagFeed();
-        }, 1000);
+        setInterval(function() {
+            mute('tf');
+        }, 500);
+        break;
+    // マイルストーン
+    case 'https://qiita.com/milestones':
+        setInterval(function() {
+            mute('ms');
+        }, 500);
         break;
     default:
         console.log(url);
@@ -32,13 +38,12 @@ function muteTrend() {
     });
 }
 
-function muteTagFeed() {
-    console.log("muteTagFeed is called");
-    $(".tf-Item").each(function(index, element) {
-        let regex = /コロナ/g;
-        if (includeCorona($(element).children("div").children(".tf-ItemContent").children("div").children("a").text())) {
-            $(element).css("display", "none");
-            // $(element).children("div").children(".tf-ItemContent").children("div").css("color", "red");
+function mute(prefix) {
+    console.log("mute " + prefix + " is called");
+    $("." + prefix + "-Item").each(function(index, element) {
+        if (includeCorona($(element).children("div").children("." + prefix + "-ItemContent").children("div").children("a").text())) {
+            $(element).hide();
+            // $(element).children("div").children("." + prefix + "-ItemContent").children("div").css("color", "red");
         }
     });
 }
