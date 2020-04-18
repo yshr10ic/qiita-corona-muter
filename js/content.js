@@ -81,6 +81,12 @@ function includeCoronaInArticle() {
             return true;
         }
     });
+    // コメント
+    $('.co-Item').each(function(index, element) {
+        if (includeCorona($(element).children('div.co-Item_text').html())) {
+            return true;
+        }
+    });
     return false;
 }
 
