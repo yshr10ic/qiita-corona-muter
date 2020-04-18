@@ -1,6 +1,5 @@
 var url = location.href;
-
-console.log(url);
+url = url.replace($(location).attr('search'), '');
 
 switch(url) {
     // トレンド
@@ -12,7 +11,7 @@ switch(url) {
     // タイムライン
     case 'https://qiita.com/timeline':
         setInterval(function() {
-            muteTimeline('tl');
+            muteTimeline();
         }, 500);
         break;
     // タグフィード
@@ -28,41 +27,61 @@ switch(url) {
         }, 500);
         break;
     default:
-        console.log(url);
+        if (url.search(/\/items\//g) != -1) {
+            muteArticle();
+        }
         break;
 }
 
-/**
- * トレンドの記事一覧で、タイトルにコロナが入っている場合にタイトルを非表示する
- */
 function muteTrend() {
-    console.log('muteTrend is called');
     $('.tr-Item').each(function(index, element) {
         if (includeCorona($(element).children('div').children('a').text())) {
-            // $(element).hide();
-            $(element).children('div').css('color', 'red');
+            $(element).hide();
+            // $(element).children('div').css('color', 'red');
         }
     });
 }
 
-function muteTimeline(prefix) {
-    console.log('mute ' + prefix + ' is called');
-    $('.' + prefix + '-Item').each(function(index, element) {
-        if (includeCorona($(element).children('div').children('.' + prefix + '-ItemContent').children('div').children('div').children('a').text())) {
-            // $(element).hide();
-            $(element).children('div').children('.' + prefix + '-ItemContent').children('div').children('div').css('color', 'red');
+function muteTimeline() {
+    $('.tl-Item').each(function(index, element) {
+        if (includeCorona($(element).children('div').children('.tl-ItemContent').children('div').children('div').children('a').text())) {
+            $(element).hide();
+            // $(element).children('div').children('.tl-ItemContent').children('div').children('div').css('color', 'red');
         }
     });
 }
 
 function mute(prefix) {
-    console.log('mute ' + prefix + ' is called');
     $('.' + prefix + '-Item').each(function(index, element) {
         if (includeCorona($(element).children('div').children('.' + prefix + '-ItemContent').children('div').children('a').text())) {
-            // $(element).hide();
-            $(element).children('div').children('.' + prefix + '-ItemContent').children('div').css('color', 'red');
+            $(element).hide();
+            // $(element).children('div').children('.' + prefix + '-ItemContent').children('div').css('color', 'red');
         }
     });
+}
+
+function muteArticle() {
+    if (includeCoronaInArticle()) {
+        location.href = 'https://qiita.com/';
+    }
+}
+
+function includeCoronaInArticle() {
+    // タイトル
+    if (includeCorona($('.it-Header_title').text())) {
+        return true;
+    }
+    // 本文
+    if (includeCorona($('#personal-public-article-body').html())) {
+        return true;
+    }
+    // リンク
+    $('.it-Reference').each(function(index, element) {
+        if (includeCorona($(element).children('a').text())) {
+            return true;
+        }
+    });
+    return false;
 }
 
 function includeCorona(text) {
